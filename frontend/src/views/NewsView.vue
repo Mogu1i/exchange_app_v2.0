@@ -27,10 +27,12 @@ const authStore = useAuthStore();
 
 const fetchArticles = async () => {
   try {
-    const response = await axios.get<Article[]>('/articles');
-    articles.value = response.data;
+    // 后端返回 { source: "redis"|"mysql", articles: Article[] }
+    const response = await axios.get<{ source: string; articles: Article[] }>('/articles');
+    articles.value = response.data.articles ?? [];
   } catch (error) {
     console.error('Failed to load articles:', error);
+    ElMessage.error('文章加载失败，请检查网络或重新登录');
   }
 };
 
