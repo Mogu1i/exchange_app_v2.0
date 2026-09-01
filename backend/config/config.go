@@ -17,6 +17,11 @@ type Config struct {
 		MaxIdleConns int
 		MaxOpenCons  int
 	}
+	DeepSeek struct {
+		ApiKey  string `mapstructure:"api_key"`
+		BaseUrl string `mapstructure:"base_url"`
+		Model   string `mapstructure:"model"`
+	}
 }
 
 var Appconfig *Config
