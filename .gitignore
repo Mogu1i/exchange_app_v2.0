@@ -1,3 +1,15 @@
-#忽略两无用文件
-完整文件/
-附件/
+﻿# Go 编译产物
+backend/*.exe
+backend/tmp/
+
+# 日志
+backend/app.log
+
+# 前端依赖
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
