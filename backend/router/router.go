@@ -12,7 +12,9 @@ import (
 
 func SetupRouter() *gin.Engine {
 	//创建默认的gin引擎实例
-	r := gin.Default()
+	r := gin.New()
+	r.Use(middlewares.RecoveryLogger())
+	r.Use(middlewares.AccessLogMiddleware())
 
 	// ── CORS 配置（允许前端 localhost:5173 跨域访问）──
 	r.Use(cors.New(cors.Config{

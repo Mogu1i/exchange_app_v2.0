@@ -1,15 +1,24 @@
-﻿# Go 编译产物
+# Go 编译产物
 backend/*.exe
 backend/tmp/
 
-# 日志
+# 日志文件与目录
+*.log
 backend/app.log
+backend/logs/
+backend/middlewares/logs/
 
-# 前端依赖
+# 前端依赖与构建产物
+node_modules/
 frontend/node_modules/
 frontend/dist/
+
+# 本地忽略目录
+完整文件/
+附件/
+i-have-adhd/
 
 # IDE
 .vscode/
 .idea/
-*.swp
+*.swp

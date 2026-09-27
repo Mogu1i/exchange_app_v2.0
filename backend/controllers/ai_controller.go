@@ -167,8 +167,8 @@ func AIProcess(ctx *gin.Context) {
 	if global.RedisDB != nil {
 		cached, err := global.RedisDB.Get(cKey).Result()
 		if err == nil && utf8.ValidString(cached) && len(cached) > 0 {
-			// 缓存命中：逐块模拟流式输出（每50字一帧）
-			chunkSize := 50
+			// 缓存命中：逐块模拟流式输出（每20字一帧）
+			chunkSize := 20
 			runes := []rune(cached)
 			for i := 0; i < len(runes); i += chunkSize {
 				end := i + chunkSize
