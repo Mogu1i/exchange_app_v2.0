@@ -24,6 +24,7 @@ func main() {
 	//自定义日志格式
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.Println("====应用程序启动====")
+	// go utils.ChatHub.Run() // WebSocket hub（暂未实现，已注释）
 
 	//其他配置
 	r := router.SetupRouter()

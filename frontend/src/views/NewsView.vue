@@ -7,8 +7,23 @@
           <p>{{ article.Preview }}</p>
           <el-button text @click="viewDetail(article.ID)">阅读更多</el-button>
         </el-card>
+
+        <!-- 分页条 -->
+        <div class="pagination-bar">
+          <el-pagination
+            v-model:current-page="currentPage"
+            :page-size="pageSize"
+            :total="totalArticles"
+            layout="prev, pager, next, jumper, total"
+            background
+            @current-change="handlePageChange"
+          />
+        </div>
       </div>
-      <div v-else class="no-data">您必须登录/注册才可以查看文章</div>
+      <div v-else-if="loading" class="no-data">
+        <el-skeleton :rows="5" animated />
+      </div>
+      <div v-else class="no-data">暂无文章，请先登录或联系管理员添加内容</div>
     </el-main>
   </el-container>
 </template>
@@ -25,15 +40,43 @@ const articles = ref<Article[]>([]);
 const router = useRouter();
 const authStore = useAuthStore();
 
-const fetchArticles = async () => {
+// 分页状态
+const currentPage = ref(1);
+const pageSize = 20;
+const totalArticles = ref(0);
+const loading = ref(false);
+
+// 响应类型
+interface ArticlesResponse {
+  source: string;
+  articles: Article[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+const fetchArticles = async (page = 1) => {
+  loading.value = true;
   try {
-    // 后端返回 { source: "redis"|"mysql", articles: Article[] }
-    const response = await axios.get<{ source: string; articles: Article[] }>('/articles');
+    const response = await axios.get<ArticlesResponse>('/articles', {
+      params: { page, pageSize }
+    });
     articles.value = response.data.articles ?? [];
+    totalArticles.value = response.data.total ?? 0;
+    currentPage.value = response.data.page ?? page;
   } catch (error) {
     console.error('Failed to load articles:', error);
     ElMessage.error('文章加载失败，请检查网络或重新登录');
+  } finally {
+    loading.value = false;
   }
+};
+
+const handlePageChange = (page: number) => {
+  // 滚动到顶部提升体验
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  fetchArticles(page);
 };
 
 const viewDetail = (id: string) => {
@@ -44,7 +87,7 @@ const viewDetail = (id: string) => {
   router.push({ name: 'NewsDetail', params: { id } });
 };
 
-onMounted(fetchArticles);
+onMounted(() => fetchArticles(1));
 </script>
 
 <style scoped>
@@ -52,9 +95,16 @@ onMounted(fetchArticles);
   margin: 20px 0;
 }
 
+.pagination-bar {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 16px;
+}
+
 .no-data {
   text-align: center;
   font-size: 1.2em;
   color: #999;
+  margin-top: 40px;
 }
 </style>
